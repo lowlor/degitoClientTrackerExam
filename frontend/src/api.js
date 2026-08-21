@@ -5,11 +5,13 @@ async function request(path, options = {}) {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  //.log(res);
+
+  //store json on data
   const data = await res.json()
+
+  //check if there are error, if there are, then use alert popup
   if(data.error != null){
     alert(data.error);
-    console.log(data);
   }
   return data;
 }
@@ -24,6 +26,13 @@ export function getClients() {
 
 export function createProject(data) {
   return request("/api/projects", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function searchName(data){
+  return request("/api/projects/search", {
     method: "POST",
     body: JSON.stringify(data),
   });

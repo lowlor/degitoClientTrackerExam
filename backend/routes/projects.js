@@ -25,6 +25,26 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/search", async (req, res) => {
+  try {
+    const { name, client_id, status } = req.body;
+    const result = await pool.query(`
+      SELECT
+        p.id,
+        p.name,
+        p.status,
+        p.client_id,
+        c.name AS client_name
+      FROM projects p
+      JOIN clients c ON c.id = p.client_id
+      WHERE p.name LIKE $1 AND p.client_id = $2
+      ORDER BY p.id ASC
+    `,[`%${name}%`, client_id]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch projects" });
+  }
+});
 // POST /api/projects
 // Creates a new project.
 router.post("/", async (req, res) => {

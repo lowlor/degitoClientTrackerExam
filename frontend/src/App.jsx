@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProjects, getClients, createProject, updateStatus } from "./api";
+import { getProjects, getClients, createProject, updateStatus, searchName } from "./api";
 
 const STATUS_OPTIONS = ["planning", "in_progress", "completed"];
 
@@ -7,6 +7,7 @@ export default function App() {
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [newProject, setNewProject] = useState({ name: "", client_id: "" });
+  const [searchProject, setSearchProject] = useState({ name: "", client_id: ""})
   const [kickState , setKickState] = useState(false);
   useEffect(() => {
     fetchProjects();
@@ -47,6 +48,15 @@ export default function App() {
     });
   }
 
+  function handleSearch(){
+    searchName({
+      name: searchProject.name,
+      client_id: Number(searchProject.client_id),
+    }).then((value)=>{
+      setSearchProject({ name: "", client_id: ""});
+      setProjects(value)
+    })
+  }
   return (
     <div className="app">
       <header className="app-header">
@@ -83,6 +93,30 @@ export default function App() {
       </section>
 
       <section className="project-list">
+        <section className="section-search">
+          <input className="input-search" type="text"
+            placeholder="search project name"
+            value={searchProject.name}
+            onChange={(e) =>
+              setSearchProject({ ...searchProject, name: e.target.value })
+            }></input>
+          <select
+            value={searchProject.client_id}
+            onChange={(e) =>
+              setSearchProject({ ...searchProject, client_id: e.target.value })
+            }
+          >
+            <option value="">Select client</option>
+            {clients.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          
+          <button onClick={handleSearch}>Search</button>
+          <button onClick={fetchProjects}>Fetch All</button>
+        </section>
         <h2>Projects</h2>
         <table>
           <thead>
