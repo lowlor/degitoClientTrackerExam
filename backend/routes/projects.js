@@ -13,9 +13,12 @@ router.get("/", async (req, res) => {
         p.name,
         p.status,
         p.client_id,
-        c.name AS client_name
+        c.name AS client_name,
+        MAX(n.id) AS note_id
       FROM projects p
       JOIN clients c ON c.id = p.client_id
+      LEFT JOIN project_notes n ON n.project_id = p.id
+	    GROUP BY p.id,p.name,p.client_id, c.name
       ORDER BY p.id ASC
     `);
     res.json(result.rows);
@@ -34,10 +37,13 @@ router.post("/search", async (req, res) => {
         p.name,
         p.status,
         p.client_id,
-        c.name AS client_name
+        c.name AS client_name,
+        MAX(n.id) AS note_id
       FROM projects p
       JOIN clients c ON c.id = p.client_id
+      LEFT JOIN project_notes n ON n.project_id = p.id
       WHERE p.name LIKE $1 AND p.client_id = $2
+	    GROUP BY p.id,p.name,p.client_id, c.name
       ORDER BY p.id ASC
     `,[`%${name}%`, client_id]);
     res.json(result.rows);
