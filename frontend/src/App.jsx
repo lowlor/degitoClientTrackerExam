@@ -7,7 +7,7 @@ export default function App() {
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [newProject, setNewProject] = useState({ name: "", client_id: "" });
-
+  const [kickState , setKickState] = useState(false);
   useEffect(() => {
     fetchProjects();
     fetchClients();
@@ -27,9 +27,12 @@ export default function App() {
       if (project) {
         project.status = newStatus;
       }
-      console.log(project)
-      console.log(projects)
       setProjects(projects);
+      if(kickState == true){
+        setKickState(false);
+      }else{
+        setKickState(true);
+      }
     });
   }
 
