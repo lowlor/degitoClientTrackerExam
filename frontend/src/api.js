@@ -5,7 +5,13 @@ async function request(path, options = {}) {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  return res.json();
+  //.log(res);
+  const data = await res.json()
+  if(data.error != null){
+    alert(data.error);
+    console.log(data);
+  }
+  return data;
 }
 
 export function getProjects() {
