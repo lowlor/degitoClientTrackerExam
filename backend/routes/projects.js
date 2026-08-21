@@ -30,6 +30,22 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { name, client_id, status } = req.body;
+    
+    const projectToCheck = await pool.query(
+      `SELECT * FROM projects`
+    );
+
+    //error for empty name
+    if(name == ""){
+        return res.status(400).json({ error: "Empty project's name"});
+    }
+
+    //check duplicate project's name
+    for (const project of projectToCheck.rows){
+      if (project.name == name && project.client_id == client_id){
+        return res.status(400).json({ error: "Duplicate project's name"});
+      }
+    }
 
     const result = await pool.query(
       `INSERT INTO projects (name, client_id, status)
