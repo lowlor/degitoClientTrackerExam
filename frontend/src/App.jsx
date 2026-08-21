@@ -27,6 +27,8 @@ export default function App() {
       if (project) {
         project.status = newStatus;
       }
+      console.log(project)
+      console.log(projects)
       setProjects(projects);
     });
   }
